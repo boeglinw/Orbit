@@ -1,0 +1,84 @@
+#-------------------------------------------------------------------------------
+# control file for running orbit
+#-------------------------------------------------------------------------------
+
+machine = NSTX 
+
+input_root = ./
+
+#-------------------------------------------------------------------------------
+# filename consists of input_root + machine + input_dir_ext
+#-------------------------------------------------------------------------------
+
+# this does not usually need to be changed
+
+input_dir_ext = _input
+
+nml_ext = .nml
+
+#-------------------------------------------------------------------------------
+# input file w/o extension all input files should have nml as extension
+#-------------------------------------------------------------------------------
+input_file =   NSTX-Case_3_ensemble
+
+static_dir = ./NSTX_input
+dynamic_dir = ./NSTX_input
+
+# total number of detectors (or trajectories if you only have one per detector i.e. no segmentation)
+N_det = 6
+
+# part of the input file that is mostly the same for each setting
+
+static_file = static_NSTX_Case3_ensemble.nml
+
+# input parameters which vary more often
+ 
+dynamic_file = dynamic_input_alex2.data 
+
+# this is only used for a forward calculation (mostly for testing, the static file needs to be adjusted)
+# reverse_direction means actually a calculation with the real field forward in time
+reverse_direction = False
+
+#-------------------------------------------------------------------------------
+# output information
+#-------------------------------------------------------------------------------
+
+# create a new nml input file
+make_new_nml = True
+
+output_root = ./
+output_dir_ext = _output/nml_orb3_
+
+#-------------------------------------------------------------------------------
+# location of orbit code
+#-------------------------------------------------------------------------------
+run_command = ./bin/orbit3
+
+#-------------------------------------------------------------------------------
+# commands and parameters for run_all_par.py
+#-------------------------------------------------------------------------------
+
+orbit_command = python ./python/run_orbit_nml_par.py 
+
+plot_command = python ./python/plot_orbits_combined_par_v1.py
+
+#-------------------------------------------------------------------------------
+# plotting controls
+#-------------------------------------------------------------------------------
+
+plot_em = True
+
+em_filled = True
+
+plot_psirel = True
+
+psirel_filled = False
+
+# set true to plot all orbits
+plot_ensemble = True
+
+all_yellow = False
+
+# number of orbits to plot 
+n_orbits_to_plot = 6
+

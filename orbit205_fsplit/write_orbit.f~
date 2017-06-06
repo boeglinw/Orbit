@@ -1,0 +1,61 @@
+      subroutine write_orbit(effic, accept, Sdl, SdV,  n)
+      include 'dcalc.h'
+
+      include 'eparmdu129.h'
+c
+c write the coordinates and psi of the current orbit into a file
+c
+      common /iounit/iorbit, icounter, orbit_fname
+      character *80 orbit_fname
+
+      parameter( n_par = 10)
+      real*8 theta_port(n_par), phi_port(n_par), gyro_angle(n_par), pitch_angle(n_par)
+      real*8 rdist(n_par)	
+
+      real*8, dimension(n_par) :: ports, portsph, al0s,be0s,rds
+
+      integer detec
+	
+
+      common/chrcom/r(4),v(4),b(4),s,sstp,port, ports,portph,portsph,detec,efflim,tol
+      parameter (mxorpt=64000)
+      common/data5/x(mxorpt+1),y(mxorpt+1),z(mxorpt+1),
+     >     x2(mxorpt+1),y2(mxorpt+1)
+      
+      common /data6/ iflxplt, steppsi(mxorpt+1), pphi(mxorpt+1),
+     >     mu(mxorpt+1), energy(mxorpt+1), vpar(mxorpt+1), vperp(mxorpt+1),
+     >     bmod(mxorpt+1), rho(mxorpt+1), lborho(mxorpt+1)
+
+c cumulatice sum of sdl, used for checks
+
+      common /sdl_data/sdl_cs(mxorpt+1)
+
+c open filename
+
+      open(iorbit, file = orbit_fname, err = 999)
+      
+c write header information
+      write (iorbit, *) '# ORBIT output '
+      write (iorbit, *) '# begin of parameter section '
+      write (iorbit, *) '#\ effic = ', effic
+      write (iorbit, *) '#\ accept = ', accept
+      write (iorbit, *) '#\ stepsize = ', S
+      write (iorbit, *) '#\ Sdl = ', Sdl
+      write (iorbit, *) '#\ SdV = ', Sdv
+      write (iorbit, *) '#\ port_th = ', port
+      write (iorbit, *) '#\ port_ph = ', portph
+      write (iorbit, *) '# end of parameter section' 
+      write (iorbit, *) '#! r[f,0]/ phi[f,1]/ z[f,2]/ x[f,3]/ y[f,4]/ psi[f,5]/ psirel[f,6]/ Em[f,7]/ Sdlcs[f,8]/ '
+      do i = 1, n
+         j = i+1
+         Em_val = Em( get_psirel(steppsi(j)), x(j), z(j) )
+         write (iorbit, *) x(j), y(j), z(j), x2(j), y2(j), steppsi(j), get_psirel(steppsi(j)), Em_val, sdl_cs(j)
+      enddo
+      close(iorbit)
+      return
+ 999  write (6,*) 'cannot open file : ', orbit_fname
+      return
+      end
+
+     
+      

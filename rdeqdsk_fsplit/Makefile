@@ -1,0 +1,37 @@
+#------Makefile for rdeqdsk split into subroutines----------
+
+RDEQDSK_OBJ = rdeqdsk.o
+INCLUDE = ../include/
+
+F90     = gfortran
+
+#FFLAGS  = -ffixed-line-length-none -fd-lines-as-comments \
+
+FDFLAG  = -fd-lines-as-code
+
+FFLAGS  = -ffixed-line-length-none $(FDFLAG) \
+          -fno-align-commons -w -fno-automatic -I$(INCLUDE)
+
+THIS_LIB = librdeqdsk.a
+
+$(THIS_LIB): $(RDEQDSK_OBJ)
+	ar rv $(THIS_LIB) $(RDEQDSK_OBJ)
+	ranlib $(THIS_LIB)
+
+#----------------------------------------------------------
+all: $(RDEQDSK_OBJ) $(THIS_LIB)
+
+%.o: %.f
+	$(F90) -c $(FFLAGS) $< -o $@
+
+#example of creating object files the long way
+#magfld.o: magfld.f
+#	$(F90) -c magfld.f $(FFLAGS) -o $@
+#----------------------------------------------------------
+.PHONY : clean
+
+clean:
+	rm -f $(RDEQDSK_OBJ)
+	rm -f $(THIS_LIB)
+
+

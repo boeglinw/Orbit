@@ -1,0 +1,13 @@
+c function to calculate the accpentance of a detectro coll. configuration
+c in one dimension
+      real*8 function accept(rd, d)
+      implicit real*8 (a-h, o-z)
+      common /accept_cmn/acc_x1, acc_x2, acc_x3, acc_x4, acc_x5
+c
+c INPUT: rd: collimator radius
+c         d : distance coll. - detector
+c        xal: detector horizontal offset      
+c
+      theta_max = atan(2.*rd/d)
+      return
+      end

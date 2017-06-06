@@ -1,0 +1,102 @@
+! show an ensemble of orbits
+
+ &general
+    coment = 'NSTX-U orbits'    
+    ifname = 'Case3'
+    ifdir = './NSTX-U_efit/Case_Studies'            ! directory for efit files
+    limfnam =  'NSTXLIM16.DAT'      ! limiter file name
+    limfdir = './NSTX_limiter/'       ! limiter directory
+    efflim = -1.                                           ! eff. cut-off
+    bfield_scale = 1.                                          ! scale factor for B-field
+    
+/
+ 
+ &control
+ IFOR = 0                       ! 0 time reversed orbit, 1 forward orbit
+ IPOLDIR = 1                    ! 0 do not reverse pol. field, 1 reverse poloidal field
+ IPL1 = 2                       ! 0=DONT PLOT ORBIT ;2,3=2,3 VIEWS (IPL1 neg, plot all in same plot)
+ IRMN = 0                       ! IRMN is 1 to plot minimum minor radius of
+ iflxplt = 0
+ v0 = 0.86                      ! major radius of vessel center
+ rmax =  2.0                    ! not important     
+ npsiplt = 45                   ! number of contours in flux plot
+/
+
+ &emissivity
+ model = 1                      ! simple power law
+ par(1) = 1.
+ par(2) = 11.45                 ! for power law
+
+  ! model = 2                       ! egauss (psi)
+  ! 29879 at 225ms 
+  ! par(1) = 568639.64287            ! amplitude
+  ! par(2) = 0.036411481001          ! position
+  ! par(3) = 0.13067810              ! width
+
+ ! model = 3                       ! hollow gauss (psi)
+
+ ! model = 4                       ! 2d-gauss position dependent (not psi !)
+ ! par(1) = 1.0                    ! amplitude
+ ! par(2) = 1.0                   ! position in R, mag axis = 1.071
+ ! par(3) = 0.08                    ! width in R
+ ! par(4) = 0.0                     ! position in Z
+ ! par(5) = 0.15                    ! width in Z
+
+ ! model = 5                       ! modulated power (psi**par(1)*(1.+par(2)sin(phi+par(4)) + par(3)cos(phi+par(5))
+ ! 29879 at 225ms 
+ ! par(1) = 361007.904            ! amplitude
+ ! par(2) = 8.69102380352         ! power
+ ! par(3) = 0.                    ! sin amp
+ ! par(4) = 0.0                    ! sin phase
+ ! par(5) = 0.59783925            ! cos amp
+ ! par(6) = 0.0                    ! cos phase
+
+ ! 29879 at 230 ms
+ ! par(1) = 163233.430979            ! amplitude
+ ! par(2) = 7.24720661613         ! power
+ ! par(3) = 0.                    ! sin amp
+ ! par(4) = 0.0                    ! sin phase
+ ! par(5) = 0.293440327389            ! cos amp
+ ! par(6) = 0.0                    ! cos phase
+
+/
+
+ &orbit_par
+
+
+  ! protons
+   part_energy = 3.0                  ! particle energy (MeV)
+  ! 3He
+  !part_energy = 0.8                  ! particle energy (MeV)
+
+/
+
+ &detection
+
+  ! 3He
+  ! ZDET = 2.                     ! Z of detected particle
+  ! ADET = 3.                     ! A of detected particle
+
+  ! protons
+  ZDET = 1.                     ! Z of detected particle
+  ADET = 1.                     ! A of detected particle
+
+  S = 0.01                      ! step length in m
+  SSTP = 40.                    ! maximum orbit length in m
+  tol = 1.e-5                   ! integrator precision
+
+   D = 0.035
+  RC = 1.e-3                  ! collimator radius
+
+  XC = 0.000886                    ! collimator size in m (half width in m) [2mm/2]
+  YC = 0.000886                    ! reduced from 1 mm to 0.886 due to circ. opening
+
+  XD = 0.000886                   ! detector size in m (half width on m)
+  YD = 0.000886
+
+  
+  NX = 3                        ! number of segments in X
+  NY = 3                        ! number if segments in Y
+
+/
+

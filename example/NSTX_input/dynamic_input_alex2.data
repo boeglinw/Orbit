@@ -1,0 +1,96 @@
+# This data file contains any physical changes and or parameters to added to the static portion of the MAST input file.
+
+# Parameters
+
+ # Number of detectors to be used in calculation.
+#\ detectors = 6   
+
+# Choose which detector to be used in calculation      
+#\ detector_number = 1,2,3,4,5,6
+# 
+
+# Example input to look at only detector number 3. detectors = 1 and detector_number = 3,1,2,4.
+
+# Theta, Phi, Gyro, and Pitch angles are inputted in degrees.
+
+# RP measurements.
+
+# Position of the collimator entrance closest to the center of the Tokamak (m)
+#\ RDist = 1.61
+# RDist = 1.63
+# RDist = 1.65
+# RDist = 1.7
+# RDist = 1.75
+# RDist = 1.80
+# RDist = 1.85
+
+
+#\ RDist_offset = 0.0
+
+# Height of RP in the tokamak. (m)
+#\ ZDist = 0.25
+
+# Toroidal angle of the RP in degrees. 
+# new value to agree with STEP file  
+#\ PHDangle = 14.21    
+
+# Rotation of RP (in degrees relative to 0 degree mark).
+# RP_rotation = 0. 
+# RP_rotation = 15.
+
+# works for Case 3
+# RP_rotation = 30. 
+
+# works only with a specially designed shield for Case 3
+#\ RP_rotation = -30.
+
+# RP_rotation = 225.
+
+# for Case 2
+# RP_rotation = 25.
+
+# for Case 1
+# RP_rotation = 10.
+
+
+# RP_rotation = 50. 
+# RP_rotation = 60. 
+# RP_rotation = 75.
+
+# Base Variables which vary
+
+# offsets in (mm) correspond -30 to -45 in phi direction
+
+#! phi_port_base[f,0]/ detector_horizontal_offset[f,1]/ detector_radial_axis_offset[f,2]/ detector_height_offest[f,3]/ theta_port_base[f,4]/ ch[i,5]/ detector_id[i,6]/
+
+
+# latest positions (Alex2)
+
+#0.  18.14 -1.04   14.52   45. 1 1
+#0.  18.14 48.88   11.82   62. 2 2
+#0.  18.14 83.31   24.33   76. 3 3
+#0. -18.14    0.   5.8   59. 4 4
+#0. -18.14 52.13   4.88   72. 5 5
+#0. -18.14 80.35   22.03  85. 0 6
+
+# reversed positions
+
+# 0.  -18.14 -1.04   14.52   45. 1 1
+# 0.  -18.14 48.88   11.82   62. 2 2
+# 0.  -18.14 83.31   24.33   76. 3 3
+# 0.   18.14    0.   5.8   59. 4 4
+# 0.   18.14 52.13   4.88   72. 5 5
+# 0.   18.14 80.35   22.03  85. 0 6
+
+# new positions for reversed pol field from Alex
+
+# sorted ch0 innermost 
+
+0.  -17.3  0.0   22.0  45. 0 1  
+0.   17.3   0.5  11.7  59. 1 2  
+0.  -17.3  50.5  18    62. 2 3  
+0.   17.3  52.8  12.5  72. 3 4  
+0.  -17.3  84.5  30.3  76. 4 5  
+0.   17.3  81.5  28.3  85. 5 6  
+
+# zoom setting : zoom_in((0.9, 1.9),(-.4, .6))

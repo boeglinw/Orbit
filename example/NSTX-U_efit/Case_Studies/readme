@@ -1,0 +1,51 @@
+
+Equilibria generate by ISOLVER, going out to R=1.85.
+
+
+Profiles taken from:
+geqshot         = 138239L
+geqtime         = 0.595
+geqindex        =  -4
+q
+
+All are high-kappa and high-delta equilibria. Q_min about 1.0 (different
+choice of profiles would result in a different value of qmin)
+
+
+
+Cases 2 and 4-7 have the same TF Rod current and Ip, but different outer gaps.
+
+Case 1:
+R0		= 0.95	; major radius of plasma geometric center
+aminor		= 0.53	; plasma minor radius
+Ip              = 1.0MA
+BT              = 0.95 T
+
+Case 2:
+R0		= 0.95	; major radius of plasma geometric center
+aminor		= 0.53	; plasma minor radius
+Ip              = 1.5MA
+BT              = 0.73 T
+
+Case 3:
+R0		= 0.95	; major radius of plasma geometric center
+aminor		= 0.53	; plasma minor radius
+Ip              = 2.0 MA
+BT              = 1.0 T
+
+Case 4:
+R0		= 0.99	; major radius of plasma geometric center
+aminor		= 0.53	; plasma minor radius
+
+Case 5:
+R0		= 0.91	; major radius of plasma geometric center
+aminor		= 0.53	; plasma minor radius
+
+Case 6:
+R0		= 0.93	; major radius of plasma geometric center
+aminor		= 0.53	; plasma minor radius
+
+Case 7:
+R0		= 0.97	; major radius of plasma geometric center
+aminor		= 0.53	; plasma minor radius
+
