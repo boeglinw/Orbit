@@ -1,8 +1,8 @@
       program read_eqdsk
 c
       character*10 case_t(6) 
-      parameter (MW=100)
-      parameter (MH=100)
+      parameter (MW=150)
+      parameter (MH=150)
       parameter (MB_PTS = 1500)
       parameter (ML_PTS = 1500)
       parameter (neqdsk = 20)

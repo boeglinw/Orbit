@@ -103,23 +103,34 @@ c     external dline,dum1
       limfag=2
       kbound=0
       m20=0
-      
+c
+c     store position in xwant and ywant where
+c     xwand = r(1) = R
+c     ywant = r(3) = Z
+c
       xwant = r(1) 
       ywant = r(3) 
 d     write (8, *) ' Entered PLOTMED with R= ', (r(i), i=1,3),
 d     .  ' xwant=', xwant, ' ywant=', ywant
       
-      
+c
+c check if position is outside of grid      
       if (xwant.lt.rgrid(1)) go to 65
       if (xwant.gt.rgrid(mw1)) go to 65
       if (ywant.lt.zgrid(1)) go to 65
       if (ywant.gt.zgrid(mh1)) go to 65
+c 
 c     call dbcevl(rgrid,mw1,zgrid,mh1,c,nw,xwant,ywant,pds,ier)
+c     interpolate psi at R,Z and its derivatives
+c
       call seva2d(bkx,lkx,bky,lky,c,mw1,mh1,xwant,ywant,pds,ier,n333)
 
+c     calculate the poloidal magnetic field
+ 
       abpolz=pds(2)/xwant
       abpolr=-pds(3)/xwant
       abpol=sqrt(abpolr*abpolr+abpolz*abpolz)
+
 d     write (8, *) ' abpolz=', abpolz, ' abpolr=', abpolr, ' abpol=', 
 d     .  abpol, ' sifb=', sifb, ' sifm=', sifm, ' pds(1)=', pds(1)
       
@@ -129,6 +140,9 @@ d     .  abpol, ' sifb=', sifb, ' sifm=', sifm, ' pds(1)=', pds(1)
       else
          xsinow=1.2
       endif
+
+
+c     calculate toroidal field component
       
 c     Check to see whether sample point is inside limiter region
       call zlim(zeronow,1,1,nbdry,rbdry,zbdry,xwant,ywant,limfag)

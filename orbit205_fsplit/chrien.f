@@ -160,6 +160,9 @@ d     write (8,*) ' sifb=', sifb,' sifm=',sifm
       sdv=0
 c     write flux to data file
 c     calculate total yield
+      print *, 'Prepare flux.data, existing parameters :'
+      print *, 'sifm (flux on axis), sifb (flux on bdry) = ', sifm,sifb
+      
       open ( 50, file = 'flux.data')
       write (50,*) 
      >      '#! i[i,0]/ j[i,0]/ r[f,2]/ z[f,3]/'//

@@ -8,6 +8,8 @@
 
       integer detec, detector_number(n_par), channel_number(n_par), detector_id(n_par)
 
+c     current position, velocity and magnetic field       
+
       common/chrcom/r(4),v(4),b(4),s,sstp, port, ports, portph, portsph,
      > efflim, tol, detec, detector_number, channel_number, detector_id
 

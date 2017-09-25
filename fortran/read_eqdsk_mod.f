@@ -5,8 +5,8 @@ C
 c
       character*10 case_t(6) 
       character*80 eq_file
-      parameter (MW=100)
-      parameter (MH=100)
+      parameter (MW=129)
+      parameter (MH=129)
       parameter (MB_PTS = 1500)
       parameter (ML_PTS = 1500)
       parameter (neqdsk = 20)

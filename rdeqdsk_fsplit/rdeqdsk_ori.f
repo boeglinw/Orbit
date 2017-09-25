@@ -19,7 +19,6 @@ c**          29/06/83..........first created                         **
 c**          02/02/99..........modified by DSD for PPPL orbit code   **
 c**                                                                  **
 c**                                                                  **
-c**   WB 2017 removed all ioption < 1 part of the code.              **
 c**********************************************************************
 
       implicit real*8 (a-h, o-z)
@@ -154,7 +153,6 @@ d     print*,'PRES(1)= ',pres(1),' pres(',mw,') = ', pres(mw)
 d     print*,'mw= ',mw
 d     print*,'mh= ',mh
       
-c thsi would be ffprim stored in temp. array workk      
       READ(neqdsk, '(5e16.9)') (workk(i),i=1,mw) 
 d     print*,'workk(1)= ',workk(1), ' workk(',mw,') = ', workk(mw)
 d     print*,'mw= ',mw
@@ -170,11 +168,9 @@ d     print*,'mh= ',mh
  220  continue
       darea=drgrid*dzgrid
       do 310 i=1,mw
-c        twopi*tmu = mu0 in SI units      
          if (imfit.ge.0) ffprim(i)=-workk(i)/(twopi*tmu)
          if (imfit.lt.0) ffprim(i)=-workk(i)
  310  continue
-c pprime data stored in temp. work array
       READ(neqdsk, '(5e16.9)') (workk(i),i=1,mw)
       do 315 i=1,mw
          pprime(i)=-workk(i)
@@ -188,12 +184,12 @@ c      do i = 1, mw
 c         READ(neqdsk, '(5e16.9)') ((psirz(i,j),j=1,mh)
 c      enddo
       READ(neqdsk, '(5e16.9)') ((psirz(i,j),i=1,mw),j=1,mh)
-c d     do j = 1, mh
-c d        do i = 1, mw
-c d           print *, i, j , psirz(i,j)
-c d        enddo      
-c d     enddo      
-d     print*, 'psirz(1,1) = ', psirz(1,1), ' psirz(',mw,mh,') = ', psirz(mw,mh)
+d     do j = 1, mh
+d        do i = 1, mw
+d           print *, i, j , psirz(i,j)
+d        enddo      
+d     enddo      
+c d     print*, 'psirz(1,1) = ', psirz(1,1), ' psirz(',mw,mh,') = ', psirz(mw,mh)
 c
 c     switch polodial field direction
 c
@@ -218,29 +214,31 @@ c
       
 
       ioption=1
-d       print*,'Starting to read QPSI' 
-d       print*,'mw= ',mw
+      if (ioption.gt.0.or.idolim.gt.0) then
+d     print*,'Starting to read QPSI' 
+d     print*,'mw= ',mw
          
-        READ(neqdsk, '(5e16.9)') (qpsi(i),i=1,mw)
-d       print*, 'qpsi(1) =  ', qpsi(1), ' qpsi(',mw,') = ', qpsi(mw)        
+         READ(neqdsk, '(5e16.9)') (qpsi(i),i=1,mw)
+d     print*, 'qpsi(1) =  ', qpsi(1), ' qpsi(',mw,') = ', qpsi(mw)        
 
-d       print*,'Starting to Read Limiter and Boundary'        
-        READ(neqdsk, '(2i5)') nbdry,limitr
+d     print*,'Starting to Read Limiter and Boundary'        
+         READ(neqdsk, '(2i5)') nbdry,limitr
          
-        READ(neqdsk, '(5e16.9)') (rbdry(i),zbdry(i),i=1,nbdry)
-        READ(neqdsk, '(5e16.9)') (xlim(i),ylim(i),i=1,limitr)
+         READ(neqdsk, '(5e16.9)') (rbdry(i),zbdry(i),i=1,nbdry)
+         READ(neqdsk, '(5e16.9)') (xlim(i),ylim(i),i=1,limitr)
 c     READ(neqdsk,out1)
 
-        xlmin=xlim(1)
-        xlmax=xlmin
-        ylmin=ylim(1)
-        ylmax=ylmin
-        do 22140 i=2,limitr
+         xlmin=xlim(1)
+         xlmax=xlmin
+         ylmin=ylim(1)
+         ylmax=ylmin
+         do 22140 i=2,limitr
             xlmin=min(xlmin,xlim(i))
             xlmax=max(xlmax,xlim(i))
             ylmin=min(ylmin,ylim(i))
             ylmax=max(ylmax,ylim(i))
-22140   continue
+22140    continue
+      endif
       close(unit=neqdsk)
       
       dxsi=1./float(mw-1)
@@ -255,8 +253,6 @@ c************************************
       
       xguess=(rgrid(1)+rgrid(mw))/2.
       radum=(xguess+xlmin)/2.
-
-c      piii is plasma current
       if (piii.le.-1.e3) then
          negcur=1
 d     print*,'negcur= ',negcur
@@ -265,13 +261,150 @@ d     print*,'negcur= ',negcur
 d     print*,'negcur= ',negcur
       endif
       
-
+c--------------------------This code should never execute, since ioption=1-----
+c------------------------------------------------------------------------------
+c------------------------------------------------------------------------------
+      if (ioption.le.0) then
+         print*,'(1) this should not be printing b/c ioption=1'
+         xmin=rbdry(1)
+         xmax=rbdry(1)
+         ymin=zbdry(1)
+         ymax=zbdry(1)
+         do i=2,nbdry
+            xmin=min(rbdry(i),xmin)
+            xmax=max(rbdry(i),xmax)
+            ymin=min(zbdry(i),ymin)
+            ymax=max(zbdry(i),ymax)
+         enddo
+c     zpline(mw,xsi,ffprim,bfp,cfp,dfp)
+c     call zpline(mw,xsi,pprime,bpp,cpp,dpp)
+c     call zpline(mw,xsi,pres,bpr,cpr,dpr)
+         if (kvtor.gt.0) then
+c     call zpline(mw,xsi,preswp,bprwp,cprwp,dprwp)
+c     call zpline(mw,xsi,presw,bprw,cprw,dprw)
+         endif
+         j=(zmaxis-zgrid(1))/dzgrid+1
+         do 800 i=1,mw
+            curmid(i)=0.0
+            pr(i)=0.
+            cwrmid(i)=0.0
+            prw(i)=0.
+            if ((rgrid(i).lt.xmin).or.(rgrid(i).gt.xmax)) goto 800
+            kk=(i-1)*mh+j
+            sinow=(psi(kk)-simag)/(psibry-simag)
+            if ((sinow.lt.0).or.(sinow.ge.1.)) go to 800
+            ppx=seval(mw,sinow,xsi,pprime,bpp,cpp,dpp)
+            fpx=seval(mw,sinow,xsi,ffprim,bfp,cfp,dfp)
+            curmid(i)=rgrid(i)*ppx+fpx/rgrid(i)
+            pr(i)=seval(mw,sinow,xsi,pres,bpr,cpr,dpr)
+            prp(i)=ppx
+            ffp(i)=fpx
+            if (kvtor.eq.1) then
+               ppw=seval(mw,sinow,xsi,preswp,bprwp,cprwp,dprwp)
+               prw(i)=seval(mw,sinow,xsi,presw,bprw,cprw,dprw)
+               rvnow=(rgrid(i)/rvtor)**2-1.
+               pr(i)=pr(i)+prw(i)*rvnow
+               cwrmid(i)=rgrid(i)*ppw*rvnow
+               curmid(i)=curmid(i)+cwrmid(i)
+               cwrmid(i)=cwrmid(i)/1000.
+            elseif (kvtor.eq.11.or.kvtor.eq.3) then
+               ppw=seval(mw,sinow,xsi,preswp,bprwp,cprwp,dprwp)
+               prw(i)=seval(mw,sinow,xsi,presw,bprw,cprw,dprw)
+               rvnow=(rgrid(i)/rvtor)**2-1.
+               pres0=pr(i)
+               prew0=prw(i)
+               if (abs(pres0).gt.1.e-10) then
+                  pwop0=prew0/pres0
+                  ptop0=exp(pwop0*rvnow)
+               else
+                  pwop0=0.0
+                  ptop0=1.0
+               endif
+               cwrmid(i)=rgrid(i)*ppw*rvnow*ptop0
+               pp0=ppx*(1.-pwop0*rvnow)
+               curmid(i)=fpx/rgrid(i)+pp0*rgrid(i)*ptop0
+     .              +cwrmid(i)
+               cwrmid(i)=cwrmid(i)/1000.
+            endif
+            curmid(i)=curmid(i)/1000.
+ 800     continue
+         print*,'(2) this should not be printing b/c ioption=1'
+         delerr=0.0
+         tmu0=twopi*tmu
+         do 850 i=1,mw
+            do 850 j=1,mh
+               kk=(i-1)*mh+j
+               wpsi(kk)=0.
+               pcurrt(kk)=0.0
+               pressu(kk)=0.0
+               pressw(kk)=0.0
+               if ((rgrid(i).lt.xmin).or.(rgrid(i).gt.xmax)) goto 850
+               if ((zgrid(j).lt.ymin).or.(zgrid(j).gt.ymax)) goto 850
+               sinow=(psi(kk)-simag)/(psibry-simag)
+               wpsi(kk)=1.0
+               if ((sinow.lt.0).or.(sinow.ge.1.)) go to 850
+               ppx=seval(mw,sinow,xsi,pprime,bpp,cpp,dpp)
+               fpx=seval(mw,sinow,xsi,ffprim,bfp,cfp,dfp)
+               pcurrt(kk)=rgrid(i)*ppx+fpx/rgrid(i)
+               prnow=seval(mw,sinow,xsi,pres,bpr,cpr,dpr)
+               pres0=prnow
+               pressu(kk)=prnow
+               if (kvtor.eq.1) then
+                  prwnow=seval(mw,sinow,xsi,presw,bprw,cprw,dprw)
+                  ppw=seval(mw,sinow,xsi,preswp,bprwp,cprwp,dprwp)
+                  rvnow=(rgrid(i)/rvtor)**2-1.
+                  pressu(kk)=prnow+prwnow*rvnow
+                  pressw(kk)=prwnow
+                  cwrnow   =rgrid(i)*ppw*rvnow
+                  pcurrt(kk)=pcurrt(kk)+cwrnow
+               elseif (kvtor.eq.11.or.kvtor.eq.3) then
+                  prew0=seval(mw,sinow,xsi,presw,bprw,cprw,dprw)
+                  rvnow=(rgrid(i)/rvtor)**2-1.
+                  if (abs(pres0).gt.1.e-10) then
+                     pwop0=prew0/pres0
+                     ptop0=exp(pwop0*rvnow)
+                  else
+                     pwop0=0.0
+                     ptop0=1.0
+                  endif
+                  pressu(kk)=pres0*ptop0
+                  ppw=seval(mw,sinow,xsi,preswp,bprwp,cprwp,dprwp)
+                  pp0=ppx*(1.-pwop0*rvnow)
+                  ppw=ppw*rvnow
+                  pcurrt(kk)=pcurrt(kk)-rgrid(i)*ppx
+     .                 +(pp0+ppw)*rgrid(i)*ptop0
+                  print*,'(3) this should not be printing b/c ioption=1'
+               endif
+c--------------------------------------------------------------------------
+c--   evaluate -del*psi/R/mu0                                             --
+c--------------------------------------------------------------------------
+               if (i.eq.1.or.i.eq.mw) goto 850
+               if (j.eq.1.or.j.eq.mh) goto 850
+               kip=i*mh+j
+               kim=(i-2)*mh+j
+               kjp=(i-1)*mh+j+1
+               kjm=(i-1)*mh+j-1
+               if (sinow.gt.0.999) go to 850
+               d2sidr2=(psi(kip)-2.*psi(kk)+psi(kim))/drgrid**2
+               d2sidz2=(psi(kjp)-2.*psi(kk)+psi(kjm))/dzgrid**2
+               dsidr=(psi(kip)-psi(kim))/2./drgrid
+               delssi=d2sidr2-dsidr/rgrid(i)+d2sidz2
+               delssi=-delssi/rgrid(i)/tmu0
+               pcnow=pcurrt(kk)
+               delerrx=abs(delssi-pcnow)
+               delerr=max(delerrx,delerr)
+ 850     continue
+         call zpline(mw,xsi,qpsi,bqpsi,cqpsi,dqpsi)
+         qout95=seval(mw,0.95,xsi,qpsi,bqpsi,cqpsi,dqpsi)
+      endif
+c-------------------------------End of ioption=0 code--------------------------
 c------------------------------------------------------------------------------
 c------------------------------------------------------------------------------
          
-c      rangle=(xlmin+xlmax)/2.
+      if (ipitch.le.0.and.ioption.eq.0) return
+         
+      rangle=(xlmin+xlmax)/2.
       rangle=rcentr
-c store psi back in 2d array copy
       do 1000 i=1,mw
          do 1000 j=1,mh
             kk=(i-1)*mh+j
@@ -281,17 +414,12 @@ c----------------------------------------------------------------------
 c--   fit 2-d zpline to psi                                          --
 c----------------------------------------------------------------------
 c     call ibcccu(copy,rgrid,mw,zgrid,mh,c,nw,wk,ier)
-c     calculate a set of 2d-spline coefficients, psi is a 2d array mapped on 1d
-c used later to interpolate on the grid
       call sets2d(psi,c,rgrid,mw,bkx,lkx,zgrid,mh,bky,lky,wk,ier)
-      mwfpol=mw
-c     calc a set of 1d splines coefficients for fpol as a function of a coordinate
-c     where 0 is at the location of the magnetic axis and 1 at the last closed
-c     flux surface: xsi
-      call zpline(mwfpol,xxxsi,fpol,bfpol,cfpol,dfpol)
+      if (ioption.gt.0) then
+         mwfpol=mw
+         call zpline(mwfpol,xxxsi,fpol,bfpol,cfpol,dfpol)
+      endif
       if (ipitch.le.0) return
-c
-c calculate values of psi on limiter
       do 1005 i=2,limitr
          delx=(xlim(i)-xlim(i-1))/4.
          dely=(ylim(i)-ylim(i-1))/4.

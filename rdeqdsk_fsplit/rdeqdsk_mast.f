@@ -20,6 +20,8 @@ c**          02/02/99..........modified by DSD for PPPL orbit code   **
 c**                                                                  **
 c**                                                                  **
 c**   WB 2017 removed all ioption < 1 part of the code.              **
+c**   WB 2017 special MAST version where the sign changes are removed**
+c**   to use 'normal' MAST EQDSK file set IPOLDIR=1 with this version**
 c**********************************************************************
 
       implicit real*8 (a-h, o-z)
@@ -171,13 +173,13 @@ d     print*,'mh= ',mh
       darea=drgrid*dzgrid
       do 310 i=1,mw
 c        twopi*tmu = mu0 in SI units      
-         if (imfit.ge.0) ffprim(i)=-workk(i)/(twopi*tmu)
-         if (imfit.lt.0) ffprim(i)=-workk(i)
+         if (imfit.ge.0) ffprim(i)=workk(i)/(twopi*tmu)
+         if (imfit.lt.0) ffprim(i)=workk(i)
  310  continue
 c pprime data stored in temp. work array
       READ(neqdsk, '(5e16.9)') (workk(i),i=1,mw)
       do 315 i=1,mw
-         pprime(i)=-workk(i)
+         pprime(i)=workk(i)
  315  continue
       
 d     print*,'Finished reading PPRIME'  
@@ -221,14 +223,18 @@ c
 d       print*,'Starting to read QPSI' 
 d       print*,'mw= ',mw
          
-        READ(neqdsk, '(5e16.9)') (qpsi(i),i=1,mw)
-d       print*, 'qpsi(1) =  ', qpsi(1), ' qpsi(',mw,') = ', qpsi(mw)        
-
+      READ(neqdsk, '(5e16.9)') (qpsi(i),i=1,mw)
+d     print*, 'qpsi(1) =  ', qpsi(1), ' qpsi(',mw,') = ', qpsi(mw)        
+      if (ipoldir .gt. 0) then
+         do i = 1, mw
+            qpsi(i) = -qpsi(i)
+         enddo
+      endif
 d       print*,'Starting to Read Limiter and Boundary'        
-        READ(neqdsk, '(2i5)') nbdry,limitr
+      READ(neqdsk, '(2i5)') nbdry,limitr
          
-        READ(neqdsk, '(5e16.9)') (rbdry(i),zbdry(i),i=1,nbdry)
-        READ(neqdsk, '(5e16.9)') (xlim(i),ylim(i),i=1,limitr)
+      READ(neqdsk, '(5e16.9)') (rbdry(i),zbdry(i),i=1,nbdry)
+      READ(neqdsk, '(5e16.9)') (xlim(i),ylim(i),i=1,limitr)
 c     READ(neqdsk,out1)
 
         xlmin=xlim(1)
