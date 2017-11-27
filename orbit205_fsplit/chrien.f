@@ -112,7 +112,7 @@ c     SIMAX      maximum value of psi (poloidal flux) on grid
       common/switch/ifor,ipl1,ipl2,irmn,rarray(201),rmn,ipoldir
 
       DIMENSION ORD(115),ORD2(115),ABSC(115)
-      DIMENSION RINIT(4), RT(3), RT0(3), RT_INIT(3)
+      DIMENSION RINIT(4), RT(3), RT0(3), DRT(3), DRTL(3), RT_INIT(3)
 
 c string to create outout data file names
       character orbit_dir*30
@@ -231,6 +231,8 @@ c     this is the location of the center of the collimator
       RINIT(2)=phd
       RINIT(3)=ZD
 
+      cphd = cos(phd)
+      sphd = sin(phd)
 c     detector position in cart. coord      
       rt0(1) = RD*cos(phd)
       rt0(2) = RD*sin(phd)
@@ -316,9 +318,17 @@ c                 into account which is at the moment ignored
                   zs = 0.
                 
 c                 transformation from detector coordinate system to NSTX coordinate system and add to detector cwenter position
-                  rt(1) = xs*cp + ys*sp*spph - zs*sp*cpph + rt0(1)
-                  rt(2) = ys*cpph + zs*spph + rt0(2) 
-                  rt(3) = xs*sp - ys*cp*spph + zs*cp*cpph + rt0(3)
+                  drtl(1) = xs*cp + ys*sp*spph - zs*sp*cpph
+                  drtl(2) = ys*cpph + zs*spph
+                  drtl(3) = xs*sp - ys*cp*spph + zs*cp*cpph
+c     rotate by PHD
+                  drt(1) = drtl(1)*cphd - drtl(2)*sphd
+                  drt(2) = drtl(1)*sphd + drtl(2)*cphd
+                  drt(3) = drtl(3)
+                  
+                  rt(1) = drt(1) + rt0(1)
+                  rt(2) = drt(2) + rt0(2) 
+                  rt(3) = drt(3) + rt0(3)
 c     convert to toroidal coords (works only if phd is within +/- pi/2.
                   rt_init(1) = sqrt(rt(1)**2 + rt(2)**2)
                   rt_init(2) = asin(rt(2)/rt_init(1))

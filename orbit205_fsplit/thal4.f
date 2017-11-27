@@ -106,9 +106,15 @@ c       ifor=0 for ppro_1.INPU so this if statement should not pass
 
 D       write (8, *) ' mv0=', mv0, ' hm=', hm, ' zre=', zre
 
+C     R in toroidal coordinates:
+C     R(1) = R
+C     R(2) = phi
+C     R(3) = Z
+      
       X(2)=R(1)
       Y(2)=R(2)
       Z(2)=R(3)
+C cart. coordinates
       X2(2)=R(1)*COS(R(2))
       Y2(2)=R(1)*SIN(R(2))
       NW=6
@@ -116,10 +122,12 @@ D       write (8, *) ' mv0=', mv0, ' hm=', hm, ' zre=', zre
       T=0.0d0
       DO 10 I=1,3
          RV(I)=R(I)
+C        normalized cart. velocities         
          RV(I+3)=V(I)/V(4)
  10   continue
       V(4)=1.0d0
       IND=1
+C time step
       DELT=S/V(4)
 
 c     If flux surface postion plot is turned on, then compute ploidal
