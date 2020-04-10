@@ -112,7 +112,7 @@ c     SIMAX      maximum value of psi (poloidal flux) on grid
       common/switch/ifor,ipl1,ipl2,irmn,rarray(201),rmn,ipoldir
 
       DIMENSION ORD(115),ORD2(115),ABSC(115)
-      DIMENSION RINIT(4), RT(3), RT0(3), DRT(3), DRTL(3), RT_INIT(3)
+      DIMENSION RINIT(4), RT(3), RT0(3), DRT(3), DRTL(3), RT_INIT(3), vd(3)
 
 c string to create outout data file names
       character orbit_dir*30
@@ -289,7 +289,8 @@ c     center of the coll. bin and the center of the detector
          do id = 1, NX
             ixd = id
             XSD = (REAL(2*ixd)/NX - offset_x)*XD
-            XTOT=XAL + XSD + XS
+c            XTOT=XAL + XSD + XS
+            XTOT=XAL + XSD - XS
             ALPH=ATAN(XTOT/D)
 D           write (8,*) ' xs= ', xs, ' xtot= ', xtot, ' alph= ', alph,
 D     .                 ' dalph= ', dalph, ' beold= ', beold
@@ -303,7 +304,7 @@ c     WB bin entrance and detector in y-direction
                   YSD = (REAL(2*jyd)/NY - offset_y)*YD
 c                 determine the direction of the line connecting the 
 c                 center of the coll. bin and the center of the detector        
-                  YTOT=YBE + YS + YSD
+                  YTOT=YBE + YSD - YS
                   BETA=ATAN(YTOT/D)
 c                 store the particle direction in the detector system
                   GYRO=ALPH
@@ -329,9 +330,9 @@ c     rotate by PHD
                   rt(1) = drt(1) + rt0(1)
                   rt(2) = drt(2) + rt0(2) 
                   rt(3) = drt(3) + rt0(3)
-c     convert to toroidal coords (works only if phd is within +/- pi/2.
+c     convert to toroidal coords 
                   rt_init(1) = sqrt(rt(1)**2 + rt(2)**2)
-                  rt_init(2) = asin(rt(2)/rt_init(1))
+                  rt_init(2) = atan2(rt(2),rt(1))
                   rt_init(3) = rt(3)
                 
                   DO K=1,3
@@ -349,13 +350,22 @@ c                 setup the velocity vector in int the detector coord. system
                   vz=SQRT(1. - vx**2 - vy**2)
 D                 write (8,*) ' vx, vy, vz=', vx, vy, vz
             
-c                 transformation from detector coordinate system to NSTX coordinate system
+c     transformation from detector coordinate system to NSTX coordinate system
+c     for phd = 0. v(1) and v(2) are identical with the toroidal components vr and vphi
                   v(1) = vx*cp + vy*sp*spph - vz*sp*cpph
                   v(2) = vy*cpph + vz*spph
                   v(3) = vx*sp - vy*cp*spph + vz*cp*cpph
-            
+c     velocity vector at detecor position
+                  vd(1) = v(1)*cphd - v(2)*sphd
+                  vd(2) = v(1)*sphd + v(2)*cphd
+c     velocity in toroidal coordinates
+                  vr =    vd(1)*cphd + vd(2)*sphd
+                  vphi = -vd(1)*sphd + vd(2)*cphd
+c this is for testing only
                   print *, 'detector v: ', vx, vy, vz
-                  print *, 'NSTX     v: ', v(1), v(2), v(3)
+                  print *, 'NSTX phd = 0  v: ', v(1), v(2), v(3)
+                  print *, 'NSTX at detector  v: ', vd(1), vd(2), v(3)
+                  print *, 'NSTX toroidal  v: ', vr, vphi, v(3)
 C.................FIND ORBIT AND STORE IT IN X,Y,Z
             
 D                 write (8,*) ' v= ', v

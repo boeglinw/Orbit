@@ -71,7 +71,7 @@ $(MAIN1): $(MAINSRC1)
 .PHONY : clean
 
 clean: clean_spline clean_orbit205 clean_orblim clean_rdpar \
-       clean_plotmed205 clean_rdeqdsk clean_bsode
+       clean_plotmed205 clean_rdeqdsk clean_bsode clean_util
 	cd bin ; rm -f $(EXEC)
 
 clean_spline:
